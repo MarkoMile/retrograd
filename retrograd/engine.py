@@ -9,7 +9,8 @@ class Value:
     Args:
       data: data held in Value
       grad: cumulative gradient
-      children: set of children Value nodes
+      _children: set of children Value nodes
+      _op: operator that created this Value
       label: label of the Value node (for visualization)
     """
     self.data = data
@@ -27,8 +28,8 @@ class Value:
     other = other if isinstance(other, Value) else Value(other)
     out = Value(self.data + other.data,_children=(self,other),_op='+')
     def _backward():
-      self.grad = 1.0 * out.grad
-      other.grad = 1.0 * out.grad
+      self.grad += 1.0 * out.grad #note the +=, accumulating gradients for the multivariate case (eg. variable is used more than once in the graph)
+      other.grad += 1.0 * out.grad
     out._backward = _backward
     return out
   
@@ -36,8 +37,8 @@ class Value:
     other = other if isinstance(other, Value) else Value(other)
     out = Value(self.data * other.data,_children=(self,other),_op='*')
     def _backward():
-      self.grad = other.data * out.grad
-      other.grad = self.data * out.grad
+      self.grad += other.data * out.grad
+      other.grad += self.data * out.grad
     out._backward = _backward
     return out
   
@@ -46,7 +47,7 @@ class Value:
     t = (math.exp(2*x) - 1) / (math.exp(2*x) + 1)
     out = Value(t,_children=(self,), _op='tanh')
     def _backward():
-      self.grad = (1.0 - t**2) * out.grad
+      self.grad += (1.0 - t**2) * out.grad
     out._backward = _backward
     return out
   
