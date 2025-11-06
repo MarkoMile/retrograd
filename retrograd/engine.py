@@ -84,7 +84,12 @@ class Value:
   #natural logarithm
   def log(self): 
     x = self.data
-    out = Value(math.log(x),_children=(self,),_op='log')
+    assert (x>=0), "Error: logarithm of negative number undefined"
+    if x>0:
+      out = Value(math.log(x),_children=(self,),_op='log')
+    else:
+      out = Value(-math.inf)
+
 
     def _backward():
       self.grad += x**-1 * out.grad
@@ -126,4 +131,3 @@ class Value:
     self.grad=1.0
     for node in reversed(topo):
       node._backward() #note this is the internal _backward function
-          
