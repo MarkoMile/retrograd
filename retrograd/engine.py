@@ -115,6 +115,17 @@ class Value:
       self.grad += (out.data > 0) * out.grad
     out._backward = _backward
     return out
+  
+  def sigmoid(self):
+    x = self.data
+    s = 1/(1+math.exp(-x))
+    out = Value(s,_children=(self,),_op='sigmoid')
+    def _backward():
+      self.grad += s*(1-s)*out.grad
+    out._backward = _backward
+    return out
+
+  ### GRADIENTS ###
 
   def backward(self):
     # topological order of the children graph
