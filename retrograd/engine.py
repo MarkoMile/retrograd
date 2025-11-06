@@ -84,12 +84,8 @@ class Value:
   #natural logarithm
   def log(self): 
     x = self.data
-    assert (x>=0), "Error: logarithm of negative number undefined"
-    if x>0:
-      out = Value(math.log(x),_children=(self,),_op='log')
-    else:
-      out = Value(-math.inf)
-
+    assert (x>0), "Error: logarithm of non-positive number undefined"
+    out = Value(math.log(x),_children=(self,),_op='log')
 
     def _backward():
       self.grad += x**-1 * out.grad
