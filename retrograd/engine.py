@@ -105,7 +105,7 @@ class Value:
     return out
   
   def relu(self):
-    out = Value(0 if self.data < 0 else self.data, (self,), 'ReLU')
+    out = Value(0 if self.data < 0 else self.data, _children=(self,), _op='ReLU')
 
     def _backward():
       self.grad += (out.data > 0) * out.grad
