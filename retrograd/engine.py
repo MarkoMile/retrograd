@@ -41,6 +41,9 @@ class Value:
   
   def __sub__(self,other):
     return self + (-other)
+  
+  def __rsub__(self,other):
+    return other + (-self)
 
   def __mul__(self,other):
     other = other if isinstance(other, Value) else Value(other)
@@ -68,7 +71,7 @@ class Value:
 
   def __rtruediv__(self,other):
     return other * self**-1
-    
+
   def exp(self):
     x = self.data
     out = Value(math.exp(x), _children=(self, ), _op='exp')
