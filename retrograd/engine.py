@@ -81,6 +81,16 @@ class Value:
     out._backward = _backward
     return out
   
+  #natural logarithm
+  def log(self): 
+    x = self.data
+    out = Value(math.log(x),_children=(self,),_op='log')
+
+    def _backward():
+      self.grad += x**-1 * out.grad
+    out._backward = _backward
+    return out
+  
 
   ### ACTIVATION FUNCTIONS ###
 
@@ -117,4 +127,3 @@ class Value:
     for node in reversed(topo):
       node._backward() #note this is the internal _backward function
           
-    
