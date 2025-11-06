@@ -1,7 +1,14 @@
 import random
 from retrograd.engine import Value
 
-class Neuron:
+class Module:
+  def get_parameters(self):
+        return []
+
+  def zero_grad(self):
+    for p in self.get_parameters():
+      p.grad=0
+class Neuron(Module):
   def __init__(self,n_inputs):
     self.w = [Value(random.uniform(-1,1)) for _ in range (n_inputs)]
     self.b = Value(random.uniform(-1,1))
@@ -15,7 +22,7 @@ class Neuron:
   def get_parameters(self):
     return self.w + [self.b]
 
-class Layer:
+class Layer(Module):
   def __init__(self,n_inputs,n_outputs):
     self.neurons = [Neuron(n_inputs) for _ in range(n_outputs)]
 
@@ -26,7 +33,7 @@ class Layer:
   def get_parameters(self):
     return [p for neuron in self.neurons for p in neuron.get_parameters()]
   
-class MLP:
+class MLP(Module):
   def __init__(self,n_inputs,layer_sizes):
     sizes = [n_inputs] + layer_sizes
     self.layers = [Layer(sizes[i],sizes[i+1]) for i in range(len(layer_sizes))]
